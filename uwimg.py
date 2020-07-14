@@ -3,7 +3,11 @@ from ctypes import *
 import math
 import random
 
-lib = CDLL(os.path.join(os.path.dirname(__file__), "libuwimg.so"), RTLD_GLOBAL)
+cwd = os.getcwd()
+lib_path = os.path.join(cwd, "libuwimg.so")
+
+lib = CDLL(lib_path, RTLD_GLOBAL)
+
 
 def c_array(ctype, values):
     arr = (ctype*len(values))()
@@ -188,3 +192,19 @@ if __name__ == "__main__":
     im = load_image("data/dog.jpg")
     save_image(im, "hey")
 
+    # Checking harris-corer detector
+    im = load_image("data/Rainier1.png")
+    detect_and_draw_corners(im, 2, 50, 3)
+    save_image(im, "corners")
+
+    # Path matching
+    a = load_image("data/Rainier1.png")
+    b = load_image("data/Rainier2.png")
+    m = find_and_draw_matches(a, b, 2, 50, 3)
+    save_image(m, "matches")
+
+    # Panorama stitching testing
+    im1 = load_image("data/Rainier1.png")
+    im2 = load_image("data/Rainier2.png")
+    pan = panorama_image(im1, im2, thresh=50)
+    save_image(pan, "easy_panorama")
